@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>クイズ！教育法規(これだけは編)</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; background-color: #f4f4f9; }
+        .hidden { display: none; }
+        .option-btn { display: block; width: 100%; margin: 10px 0; padding: 12px; cursor: pointer; background: white; border: 1px solid #ccc; border-radius: 5px; }
+        .option-btn:hover { background: #e0e0e0; }
+        #feedback-screen, #result-screen { margin-top: 20px; padding: 15px; border: 1px solid #aaa; background: #fff; border-radius: 5px; }
+        .q-display { font-weight: bold; color: #333; margin-bottom: 10px; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+<div id="start-screen">
+    <h1>クイズ！教育法規(これだけは編)</h1>
+    <button id="start-btn">スタート</button>
+</div>
+
+<div id="quiz-screen" class="hidden">
+    <h2 id="question-text"></h2>
+    <div id="options-container"></div>
+</div>
+
+<div id="feedback-screen" class="hidden">
+    <div class="q-display" id="fb-question-text"></div>
+    <h3 id="judge-text"></h3>
+    <p><strong>解説:</strong> <span id="explanation-text"></span></p>
+    <button id="next-btn">次の問題に進む</button>
+</div>
+
+<div id="result-screen" class="hidden">
+    <h2>結果発表</h2>
+    <p id="score-text"></p>
+    <p id="message-text"></p>
+    <button id="reset-btn">タイトル画面に戻る</button>
+</div>
+
+<script>
+    // 37問のデータ（省略せず反映してください）
+    const fullData = [
+        {"quiz": "全体の奉仕者としての義務や、服務の宣誓を定めた法律をなんというか。", "answer": "地方公務員法", "incorrect option1": "教育大綱", "incorrect option2": "教育公務員特例法", "incorrect option3": "地方行政法", "explanation": "地公法第30条では、公務員が私利ではなく公共の利益のために働くべきことを規定しています。"},
+        {"quiz": "教員は地方公務員法第32条で法令と何に従う義務があると定められているか。", "answer": "上司の命令", "incorrect option1": "地域の願い", "incorrect option2": "同僚の命令", "incorrect option3": "校則", "explanation": "ただし違法な命令は対象外です。"},
+        {"quiz": "職の信用を傷つけてはいけないという、地方公務員法第33条で定められている禁止事項は何か。", "answer": "信用失墜行為", "incorrect option1": "SNS", "incorrect option2": "万引き", "incorrect option3": "信頼喪失行為", "explanation": "信用失墜行為とは、公務員の品位を損なう行為です。"},
+        {"quiz": "退職後も守る必要もある、地方公務員法第34条で定められている義務は何か。", "answer": "守秘義務", "incorrect option1": "職務専念義務", "incorrect option2": "上司の命令に従う義務", "incorrect option3": "教育に係る法令に従う義務", "explanation": "退職後も職務で知り得た秘密は決して漏らしてはいけません。"},
+        {"quiz": "地方公務員法第35条で定められている、勤務時間は職務に専念しなければならないという義務を何というか。", "answer": "職務専念義務", "incorrect option1": "守秘義務", "incorrect option2": "上司の命令に従う義務", "incorrect option3": "教育に係る法令に従う義務", "explanation": "勤務時間中は全力を挙げて職務に遂行しなくてはいけません。"},
+        {"quiz": "教員はどの範囲でのみ政治的行為が認められているか。", "answer": "どの範囲もだめ", "incorrect option1": "国政選挙に係る範囲のみ", "incorrect option2": "所属地外の地方自治体での政治活動のみ", "incorrect option3": "ストライキやサボタージュ", "explanation": "教育の中立性を守るために教員の政治活動は原則一切禁止です。"},
+        {"quiz": "地方公務員法第38条で定められている、教員が制限されている行為とは何か。", "answer": "営利企業への従事", "incorrect option1": "政治的活動", "incorrect option2": "信用失墜行為", "incorrect option3": "争議行為", "explanation": "教育に関する副業は許可が下りる場合もあります。所属長の許可が必要です。"},
+        {"quiz": "教員が研修を受けなければならないと定めている法律はどれか。", "answer": "教育公務員特例法", "incorrect option1": "教育基本法", "incorrect option2": "地方公務員法", "incorrect option3": "学校教育法", "explanation": "変化の激しい現代に生きる子どもたちへより良い教育を届けるためにも研修は欠かせません。"},
+        {"quiz": "授業の様子を生徒や学校長の許可なく流した際に問われる服務違反はどれか。", "answer": "守秘義務", "incorrect option1": "職務専念義務", "incorrect option2": "上司の命令に従う義務", "incorrect option3": "営利企業への従事制限", "explanation": "生徒のプライバシーも守秘義務の1つです。"},
+        {"quiz": "地方公務員法第30条において教員は何の奉仕者であることを求められているか。", "answer": "全体", "incorrect option1": "一部", "incorrect option2": "子ども", "incorrect option3": "公共", "explanation": "すべて公務員は全体の奉仕者でなければいけません。"},
+        {"quiz": "地方公務員法第30条を特に何基準というか。", "answer": "根本", "incorrect option1": "大根", "incorrect option2": "根源", "incorrect option3": "混沌", "explanation": "憲法でも定められた理念を体現している根本基準です。"},
+        {"quiz": "教育公務員特例法第22条において教員は誰の承認を得ることで勤務地外での研修を受けることができると定められているか。", "answer": "本属長", "incorrect option1": "校長", "incorrect option2": "センター長", "incorrect option3": "同僚", "explanation": "勤務地によって上司が校長とは限りません。"},
+        {"quiz": "学校が負う、子どもの安全を確保する法的義務をなんというか。", "answer": "安全配慮義務", "incorrect option1": "安全考慮義務", "incorrect option2": "安全安心義務", "incorrect option3": "健康増進義務", "explanation": "教育活動において、学校は子どもの生命・身体の安全を守る義務があります。"},
+        {"quiz": "学校教育法第37条において、教諭は何を司るとされているか。", "answer": "教育", "incorrect option1": "授業", "incorrect option2": "校務", "incorrect option3": "校務分掌", "explanation": "教諭は児童生徒の教育を司り、校長は校務を司ります。"},
+        {"quiz": "学校教育法第37条において、校長は何を司るとされているか。", "answer": "校務", "incorrect option1": "教育", "incorrect option2": "校務分掌", "incorrect option3": "指導", "explanation": "校長は学校の管理・運営の責任者であるため、校務全体を統括します。"},
+        {"quiz": "我が国の法規の効力関係において最も上位の法規はどれか。", "answer": "日本国憲法", "incorrect option1": "教育基本法", "incorrect option2": "勅令", "incorrect option3": "教育大綱", "explanation": "法体系のピラミッドの頂点は憲法です。すべての法は憲法に反してはなりません。"},
+        {"quiz": "教員が研修を受ける権利と義務を記した法律をなんというか。", "answer": "教育基本法", "incorrect option1": "学校教育法", "incorrect option2": "教育委員会規則", "incorrect option3": "教育職員免許法", "explanation": "教育基本法第9条で、教員の自発的な研修の重要性が明記されています。"},
+        {"quiz": "教育基本法第9条において、教員は何に励まなければならないと定義されているか。", "answer": "研究と修養", "incorrect option1": "研修と療養", "incorrect option2": "研修と休養", "incorrect option3": "研究と勉強", "explanation": "「研究」は知識の向上、「修養」は人格の陶冶を意味します。"},
+        {"quiz": "修士相当の学位と所定の単位を取得した者が得られる免許をなんというか。", "answer": "専修免許", "incorrect option1": "特別免許", "incorrect option2": "一種免許", "incorrect option3": "修士免許", "explanation": "一種免許の上位資格です。"},
+        {"quiz": "学士相当の学位と所定の単位を取得した者が得られる免許をなんというか。", "answer": "一種免許", "incorrect option1": "専修免許", "incorrect option2": "二種免許", "incorrect option3": "学士免許", "explanation": "大学卒業レベルの標準的な免許です。"},
+        {"quiz": "短期大学士相当の学位と所定の単位を取得した者が得られる免許をなんというか。", "answer": "二種免許", "incorrect option1": "一種免許", "incorrect option2": "特別免許", "incorrect option3": "臨時免許", "explanation": "場合によっては一種免許への切り替えを勧められることがあります。"},
+        {"quiz": "普通免許状の有効範囲はどれか。", "answer": "全国の都道府県", "incorrect option1": "所属する県", "incorrect option2": "所属する市町村", "incorrect option3": "所属する学校", "explanation": "日本全国共通資格。発行者は各都道府県の教育委員会です。"},
+        {"quiz": "その分野に優れた知識や経験を持つ、教員免許を有していない社会人に一定の手続きを経て授与される教員免許を何というか。", "answer": "特別免許", "incorrect option1": "臨時免許", "incorrect option2": "免外免許", "incorrect option3": "例外免許", "explanation": "専門知識や技能を持つ社会人を登用するための免許です。"},
+        {"quiz": "臨時免許の有効期限は何年か。", "answer": "3年", "incorrect option1": "2年", "incorrect option2": "5年", "incorrect option3": "1年", "explanation": "みんなで教員不足を解消しましょう。"},
+        {"quiz": "いじめが停止したと判断するためには最低でもどの程度の期間被害者が心身の苦痛を受けていないことが必要になるか。", "answer": "3ヶ月", "incorrect option1": "3日", "incorrect option2": "3週間", "incorrect option3": "3年", "explanation": "いじめ防止対策推進法に基づく目安です。継続的な観察が重要です。"},
+        {"quiz": "令和8年度現在、鹿児島県内の学びの多様化学校は志布志市とどこに設置されているか。", "answer": "さつま町", "incorrect option1": "南さつま市", "incorrect option2": "南九州市", "incorrect option3": "名瀬市", "explanation": "宮之城中学校の分校という扱いになっています。"},
+        {"quiz": "令和8年度現在、鹿児島県内の夜間学校はどこの高校に併設されているか。", "answer": "開陽高校", "incorrect option1": "玉龍高校", "incorrect option2": "南隼高校", "incorrect option3": "東高校", "explanation": "対象者に比べ入学者はまだまだ少ないです。"},
+        {"quiz": "夜間学校の設置の根拠となる法律は何か。", "answer": "教育機会確保法", "incorrect option1": "教育機会均等法", "incorrect option2": "義務教育法", "incorrect option3": "学校教育法", "explanation": "不登校児童生徒や学び直したい人への機会を確保する法律です。"},
+        {"quiz": "夜間学校は法的には1条校の何とみなされているか。", "answer": "中学校", "incorrect option1": "小学校", "incorrect option2": "高等学校", "incorrect option3": "大学", "explanation": "夜間中学は、法律上「中学校」として位置づけられています。"},
+        {"quiz": "各自治体の教育長は誰が任命するか。", "answer": "首長", "incorrect option1": "教育委員会", "incorrect option2": "市民(選挙)", "incorrect option3": "退職校長会", "explanation": "中立性を確保するためにも組織の人的構成に配慮することが求められています。"},
+        {"quiz": "教育長の任期は何年か。", "answer": "3年", "incorrect option1": "2年", "incorrect option2": "5年", "incorrect option3": "原則無期限", "explanation": "教育行政の安定性を図るため、任期が定められています。"},
+        {"quiz": "いじめの定義やいじめに対する教職員や学校の責務を定めた法規をなんというか。", "answer": "いじめ防止対策推進法", "incorrect option1": "日本国憲法", "incorrect option2": "民法", "incorrect option3": "児童虐待防止法", "explanation": "いじめとは被害者が心身の苦痛を訴えているもの全てです。"},
+        {"quiz": "体罰の禁止を明示している法規はどれか。", "answer": "学校教育法", "incorrect option1": "教育公務員特例法", "incorrect option2": "教育基本法", "incorrect option3": "日本国憲法", "explanation": "学校教育法第11条で明確に禁止されています。"},
+        {"quiz": "教育活動における子どもの保健と安全を監督する義務等を定めた法律を何というか。", "answer": "学校保健安全法", "incorrect option1": "教育基本法", "incorrect option2": "学校教育法", "incorrect option3": "学校安全基本法", "explanation": "健康診断、衛生管理、事故防止など学校生活の安全を守る根拠法です。"},
+        {"quiz": "学校保健安全法において、学校では最低でもどの頻度で定期点検を行わなければならないと定められているか。", "answer": "各学期", "incorrect option1": "各年度", "incorrect option2": "5年", "incorrect option3": "隔月", "explanation": "他に、日常点検や月次点検なども指針として紹介されています。"},
+        {"quiz": "我が国が法的根拠に基づいて示してる教育課程の基準や指導の根拠となる告示を何というか。", "answer": "学習指導要領", "incorrect option1": "教育基本計画", "incorrect option2": "教育大綱", "incorrect option3": "グランドデザイン", "explanation": "文部科学省が策定し、全国の学校教育の質を一定に保つ役割があります。"},
+        {"quiz": "体罰と懲戒の区別基準はどれか。", "answer": "児童生徒に身体的な苦痛を与えたかどうか", "incorrect option1": "愛のある指導であったかどうか", "incorrect option2": "同僚と相談したかどうか", "incorrect option3": "上司に相談したかどうか。", "explanation": "懲戒か体罰かを判断する際に意図や背景は根拠になりません。"}
+    ];
+
+    let quiz = [], currentIdx = 0, score = 0;
+
+    document.getElementById('start-btn').addEventListener('click', startQuiz);
+    document.getElementById('next-btn').addEventListener('click', nextQuestion);
+    document.getElementById('reset-btn').addEventListener('click', backToTitle);
+
+    function startQuiz() {
+        quiz = [...fullData].sort(() => 0.5 - Math.random()).slice(0, 10);
+        currentIdx = 0; score = 0;
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        showQuestion();
+    }
+
+    function backToTitle() {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('feedback-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.add('hidden');
+        document.getElementById('start-screen').classList.remove('hidden');
+    }
+
+    function showQuestion() {
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        document.getElementById('feedback-screen').classList.add('hidden');
+        const q = quiz[currentIdx];
+        document.getElementById('question-text').innerText = (currentIdx + 1) + ". " + q['quiz'];
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        [q['answer'], q['incorrect option1'], q['incorrect option2'], q['incorrect option3']].sort(() => 0.5 - Math.random()).forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.addEventListener('click', () => checkAnswer(opt, q));
+            container.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected, q) {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('feedback-screen').classList.remove('hidden');
+        
+        // 解説画面に問題文を表示
+        document.getElementById('fb-question-text').innerText = (currentIdx + 1) + ". " + q['quiz'];
+        
+        if (selected === q['answer']) score++;
+        document.getElementById('judge-text').innerText = (selected === q['answer']) ? "正解！" : "残念…正解は「" + q['answer'] + "」でした。";
+        document.getElementById('explanation-text').innerText = q['explanation'];
+    }
+
+    function nextQuestion() {
+        currentIdx++;
+        if (currentIdx < 10) showQuestion();
+        else showResult();
+    }
+
+    function showResult() {
+        document.getElementById('feedback-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        document.getElementById('score-text').innerText = "正解数: " + score + " / 10";
+        let msg = score <= 5 ? "基礎から見直しましょう" : score <= 8 ? "間違えた問題を復習してみましょう" : score == 9 ? "惜しい！！もう一度解いてみましょう" : "すごい！このクイズは全37種類！何度も解いて教育法規の基礎をぜひ完璧に抑えてください！";
+        document.getElementById('message-text').innerText = msg;
+    }
+</script>
+</body>
+</html>
