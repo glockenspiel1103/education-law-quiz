@@ -4,13 +4,35 @@
     <meta charset="UTF-8">
     <title>クイズ！教育法規(これだけは編)</title>
     <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; background-color: #f4f4f9; }
-        .hidden { display: none; }
-        .option-btn { display: block; width: 100%; margin: 10px 0; padding: 12px; cursor: pointer; background: white; border: 1px solid #ccc; border-radius: 5px; }
-        .option-btn:hover { background: #e0e0e0; }
-        #feedback-screen, #result-screen { margin-top: 20px; padding: 15px; border: 1px solid #aaa; background: #fff; border-radius: 5px; }
-        .q-display { font-weight: bold; color: #333; margin-bottom: 10px; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
-    </style>
+    body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; background-color: #f4f4f9; }
+    .hidden { display: none; }
+    
+    /* スタートボタンのスタイル改良 */
+    #start-btn {
+        display: block;
+        width: 100%;
+        max-width: 300px;      /* ボタンの最大幅 */
+        margin: 30px auto;     /* 上下に余白を取り、中央寄せ */
+        padding: 25px 0;       /* 縦に大きくする */
+        font-size: 24px;       /* 文字を大きく */
+        font-weight: bold;     /* 文字を太く */
+        cursor: pointer;
+        background-color: #28a745; /* 緑色で見やすく */
+        color: white;
+        border: none;
+        border-radius: 12px;   /* 角を丸く */
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* 立体感を出す */
+    }
+    #start-btn:hover {
+        background-color: #218838;
+    }
+
+    .option-btn { display: block; width: 100%; margin: 10px 0; padding: 12px; cursor: pointer; background: white; border: 1px solid #ccc; border-radius: 5px; }
+    .option-btn:hover { background: #e0e0e0; }
+    #feedback-screen, #result-screen { margin-top: 20px; padding: 15px; border: 1px solid #aaa; background: #fff; border-radius: 5px; }
+    .q-display { font-weight: bold; color: #333; margin-bottom: 10px; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
+</style>
+
 </head>
 <body>
 
