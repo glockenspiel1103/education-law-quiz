@@ -1,0 +1,100 @@
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:20px;
+    background:#f3f6fb;
+    font-family:-apple-system,BlinkMacSystemFont,"Yu Gothic","Meiryo",sans-serif;
+}
+
+.container{
+    max-width:800px;
+    margin:auto;
+    background:#fff;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+
+h1{
+    text-align:center;
+    color:#1976d2;
+    margin-bottom:10px;
+}
+
+#progress{
+    text-align:center;
+    font-size:18px;
+    margin-bottom:20px;
+    color:#666;
+}
+
+.question{
+    font-size:22px;
+    line-height:1.7;
+    margin-bottom:30px;
+}
+
+.choices{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.choices button{
+    font-size:18px;
+    padding:15px;
+    border:none;
+    border-radius:8px;
+    background:#1976d2;
+    color:white;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.choices button:hover{
+    opacity:.9;
+}
+
+.explanation{
+    margin-top:25px;
+    padding:15px;
+    border-radius:8px;
+    background:#fff8dc;
+    min-height:50px;
+    line-height:1.7;
+}
+
+#next{
+    width:100%;
+    margin-top:25px;
+    padding:15px;
+    font-size:18px;
+    background:#43a047;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+#next:hover{
+    opacity:.9;
+}
+
+@media(max-width:600px){
+
+.container{
+    padding:18px;
+}
+
+.question{
+    font-size:18px;
+}
+
+.choices button{
+    font-size:16px;
+}
+
+}
