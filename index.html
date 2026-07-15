@@ -2,62 +2,87 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>クイズ！教育法規(これだけは編)</title>
     <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; background-color: #f4f4f9; }
-    .hidden { display: none; }
-    
-    /* スタートボタンのスタイル改良 */
-    #start-btn {
-        display: block;
-        width: 100%;
-        max-width: 300px;      /* ボタンの最大幅 */
-        margin: 30px auto;     /* 上下に余白を取り、中央寄せ */
-        padding: 25px 0;       /* 縦に大きくする */
-        font-size: 24px;       /* 文字を大きく */
-        font-weight: bold;     /* 文字を太く */
-        cursor: pointer;
-        background-color: #28a745; /* 緑色で見やすく */
-        color: white;
-        border: none;
-        border-radius: 12px;   /* 角を丸く */
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* 立体感を出す */
-    }
-    #start-btn:hover {
-        background-color: #218838;
-    }
+        body { 
+            font-family: sans-serif; 
+            margin: 0; 
+            padding: 15px; 
+            background-color: #f4f4f9; 
+            line-height: 1.6;
+        }
+        /* コンテナをスマホ全画面に合わせる */
+        #container { max-width: 600px; margin: 0 auto; }
+        .hidden { display: none; }
+        
+        h1 { font-size: 1.5rem; text-align: center; }
+        h2 { font-size: 1.25rem; }
 
-    .option-btn { display: block; width: 100%; margin: 10px 0; padding: 12px; cursor: pointer; background: white; border: 1px solid #ccc; border-radius: 5px; }
-    .option-btn:hover { background: #e0e0e0; }
-    #feedback-screen, #result-screen { margin-top: 20px; padding: 15px; border: 1px solid #aaa; background: #fff; border-radius: 5px; }
-    .q-display { font-weight: bold; color: #333; margin-bottom: 10px; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
-</style>
+        /* ボタン共通スタイル */
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 16px; /* スマホで拡大されない最小サイズ */
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-sizing: border-box; /* パディングを含めた幅計算 */
+        }
 
+        #start-btn {
+            background-color: #28a745;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .option-btn { 
+            background: white; 
+            border: 1px solid #ccc; 
+            text-align: left;
+        }
+        .option-btn:active { background: #e0e0e0; }
+
+        #feedback-screen, #result-screen { 
+            padding: 20px; 
+            border: 1px solid #aaa; 
+            background: #fff; 
+            border-radius: 8px; 
+        }
+
+        .q-display { font-weight: bold; color: #333; margin-bottom: 15px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        #next-btn, #reset-btn { background-color: #007bff; color: white; text-align: center; }
+    </style>
 </head>
 <body>
 
-<div id="start-screen">
-    <h1>クイズ！教育法規(これだけは編)</h1>
-    <button id="start-btn">スタート</button>
-</div>
+<div id="container">
+    <div id="start-screen">
+        <h1>クイズ！教育法規(これだけは編)</h1>
+        <button id="start-btn">スタート</button>
+    </div>
 
-<div id="quiz-screen" class="hidden">
-    <h2 id="question-text"></h2>
-    <div id="options-container"></div>
-</div>
+    <div id="quiz-screen" class="hidden">
+        <h2 id="question-text"></h2>
+        <div id="options-container"></div>
+    </div>
 
-<div id="feedback-screen" class="hidden">
-    <div class="q-display" id="fb-question-text"></div>
-    <h3 id="judge-text"></h3>
-    <p><strong>解説:</strong> <span id="explanation-text"></span></p>
-    <button id="next-btn">次の問題に進む</button>
-</div>
+    <div id="feedback-screen" class="hidden">
+        <div class="q-display" id="fb-question-text"></div>
+        <h3 id="judge-text"></h3>
+        <p><strong>解説:</strong> <span id="explanation-text"></span></p>
+        <button id="next-btn">次の問題に進む</button>
+    </div>
 
-<div id="result-screen" class="hidden">
-    <h2>結果発表</h2>
-    <p id="score-text"></p>
-    <p id="message-text"></p>
-    <button id="reset-btn">タイトル画面に戻る</button>
+    <div id="result-screen" class="hidden">
+        <h2>結果発表</h2>
+        <p id="score-text"></p>
+        <p id="message-text"></p>
+        <button id="reset-btn">タイトル画面に戻る</button>
+    </div>
 </div>
 
 <script>
